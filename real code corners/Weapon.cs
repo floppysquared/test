@@ -5,13 +5,13 @@ using UnityEngine;
 
 public class Weapon : MonoBehaviour
 {
-    [SerializeField] GameObject m_bulletPrefab;
-    [SerializeField] float m_forceFactor = 3.0f;
-    [SerializeField] float m_cooldown = 1.0f;
-    [SerializeField] GameObject m_muzzle;
-    [SerializeField] GameObject m_muzzleEffect;
+    [SerializeField] GameObject bulletPrefab;
+    [SerializeField] float forceFactor = 3.0f;
+    [SerializeField] float cooldown = 1.0f;
+    [SerializeField] GameObject muzzle;
+    [SerializeField] GameObject muzzleEffect;
 
-    private float m_lastTimeShot = 0f;
+    private float lastTimeShot = 0f;
 
 
     // Start is called before the first frame update
@@ -28,30 +28,31 @@ public class Weapon : MonoBehaviour
 
     private void Shoot()
     {
-        if (Input.GetMouseButton(0) && Time.time > m_lastTimeShot + m_cooldown) {
-            m_lastTimeShot = Time.time;
+        if (Input.GetMouseButton(0) && Time.time > lastTimeShot + cooldown) {
+            lastTimeShot = Time.time;
 
-            GameObject bullet = Instantiate(
-                m_bulletPrefab,
-                m_muzzle.transform.position,
+            var bullet = Instantiate(
+                bulletPrefab,
+                muzzle.transform.position,
                 Quaternion.identity
             );
-            Rigidbody rb = bullet.GetComponent<Rigidbody>();
 
-            Vector3 movDir = Quaternion.Euler(0, transform.eulerAngles.y, 0) * Vector3.forward;
+            var rb = bullet.GetComponent<Rigidbody>();
+
+            var movDir = Quaternion.Euler(0, transform.eulerAngles.y, 0) * Vector3.forward;
 
             PlayMuzzleEffect();
 
-            rb.AddForce(m_forceFactor * movDir, ForceMode.Impulse);
+            rb.AddForce(forceFactor * movDir, ForceMode.Impulse);
             Destroy(bullet, 2.0f);
         }
     }
 
     private void PlayMuzzleEffect()
     {
-        GameObject effect = Instantiate(
-            m_muzzleEffect,
-            m_muzzle.transform.position,
+        var effect = Instantiate(
+            muzzleEffect,
+            muzzle.transform.position,
             Quaternion.identity
         );
 
@@ -61,8 +62,9 @@ public class Weapon : MonoBehaviour
     private IEnumerator MoveEffectWithMuzzle(GameObject effect)
     {
         float startTime = Time.time;
+
         while (Time.time < startTime + 0.5f) {
-            effect.transform.position = m_muzzle.transform.position;
+            effect.transform.position = muzzle.transform.position;
             yield return new WaitForFixedUpdate();
         }
 
