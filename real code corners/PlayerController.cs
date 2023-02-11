@@ -6,18 +6,18 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     // Fields
-    [SerializeField] float speed = 1.0f; // private
-    [SerializeField] Transform m_camera;
-    private Rigidbody m_rb;
-    private Animator m_anim;
-    private bool m_isFiring = false;
+    [SerializeField] private float speed = 1.0f;
+    [SerializeField] Transform camera;
+    private Rigidbody rigidbody;
+    private Animator animator;
+    private bool isFiring = false;
 
     // Start is called before the first frame update
     // Methods
     void Start()
     {
-        m_rb = GetComponent<Rigidbody>();
-        m_anim = GetComponent<Animator>();
+        rigidbody = GetComponent<Rigidbody>();
+        animator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -34,9 +34,9 @@ public class PlayerController : MonoBehaviour
      private void Shooting()
     {
         if (Input.GetKey(KeyCode.Space) || Input.GetMouseButton(0)) {
-            m_isFiring = true;
+            isFiring = true;
         } else {
-            m_isFiring = false;
+            isFiring = false;
         }
 
         PlayFiringAnimation();
@@ -44,11 +44,11 @@ public class PlayerController : MonoBehaviour
 
     private void PlayFiringAnimation()
     {
-        if (m_isFiring) {
-            m_anim.SetTrigger("FireTrigger");
-            m_anim.SetBool("IsFiring", m_isFiring);
+        if (isFiring) {
+            animator.SetTrigger("FireTrigger");
+            animator.SetBool("IsFiring", isFiring);
         } else {
-            m_anim.SetBool("IsFiring", false);
+            animator.SetBool("IsFiring", false);
         }
 
     }
@@ -56,19 +56,19 @@ public class PlayerController : MonoBehaviour
    private void Movements()
     {
         Vector3 input = new(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
-        Vector3 diraction = input.normalized;
+        Vector3 direction = input.normalized;
 
         if (input.magnitude > 0) {
-            float targetAngle = Mathf.Atan2(diraction.x, diraction.z) * Mathf.Rad2Deg + m_camera.eulerAngles.y;
+            float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + camera.eulerAngles.y;
 
-            m_rb.MoveRotation(Quaternion.Euler(0, targetAngle, 0));
+            rigidbody.MoveRotation(Quaternion.Euler(0, targetAngle, 0));
 
             Vector3 moveDir = Quaternion.Euler(0, targetAngle, 0) * Vector3.forward;
-            m_rb.MovePosition(m_rb.position + speed * Time.fixedDeltaTime * moveDir);
+            rigidbody.MovePosition(rigidbody.position + speed * Time.fixedDeltaTime * moveDir);
 
-            m_isRun = true;
+            isRunning = true;
         } else {
-            m_isRun = false;
+            isRunning = false;
         }
 
         PlayRunAnimation();
@@ -76,6 +76,6 @@ public class PlayerController : MonoBehaviour
 
     private void PlayRunAnimation()
     {
-        m_anim.SetBool("IsRun", m_isRun);
+        animator.SetBool("IsRun", isRunning);
     }
 }
