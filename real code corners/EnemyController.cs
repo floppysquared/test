@@ -7,47 +7,50 @@ using UnityEngine;
 
 public class EnemyController : MonoBehaviour
 {
-    [SerializeField] float m_speed = 1.0f;
-    [SerializeField] GameObject m_player;
-    [SerializeField] float m_breakDistance = 2.0f;
+    [SerializeField] float speed = 1.0f;
+    [SerializeField] GameObject player;
+    [SerializeField] float breakDistance = 2.0f;
 
-    private bool m_isChasing = false;
-    private Rigidbody m_rb;
+    private bool isChasing = false;
+    private Rigidbody rigidbody;
 
     // Start is called before the first frame update
     void Start()
     {
-        m_rb = GetComponent<Rigidbody>();
+        rigidbody = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-        EnemyMovment();
+        MoveEnemy();
     }
 
-    private void EnemyMovment()
+    private void MoveEnemy()
     {
-        float distance = Vector3.Distance(transform.position, m_player.transform.position);
+        float distance = Vector3.Distance(transform.position, player.transform.position);
 
-        if (distance > m_breakDistance)
+        if (distance > breakDistance)
         {
-            transform.LookAt(m_player.transform);
-            m_rb.position = Vector3.MoveTowards(transform.position, m_player.transform.position, m_speed * Time.fixedDeltaTime);
+            transform.LookAt(player.transform);
+            rigidbody.position = Vector3.MoveTowards(
+                transform.position,
+                player.transform.position,
+                speed * Time.fixedDeltaTime);
         }
     }
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            m_isChasing = true;
+            isChasing = true;
         }
     }
     private void OnTriggerExit(Collider other)
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            m_isChasing = false;
+            isChasing = false;
         }
     }
 }
